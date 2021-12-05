@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+</head>
+<body>
+<h1> stuFind </h1>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+    </div>
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+
+
+<script src="../layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述 JS 路径需要改成你本地的 -->
+
+<script>
+    layui.use('table', function(){
+
+        var table = layui.table,
+            $ = layui.jquery;
+        table.on('tool(test)', function (obj){
+            var data = obj.data,
+                layEvent = obj.event;
+
+            console.log(data);
+            console.log(layEvent)
+            if(layEvent === "edit") {
+                layer.open({
+                    type: 2
+                    ,skin: 'layui-layer-molv'
+                    ,area: ['600px', '800px']
+                    ,title: ['编辑书本信息','font-size:18px']
+                    ,btn: ['确定', '取消']
+                    ,shadeClose: true
+                    ,shade: 0 //遮罩透明度
+                    ,maxmin: true //允许全屏最小化
+                    ,content:"stuAdd.html" //弹窗路径
+                })
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "/studentFindById",
+                    data: obj.data,
+                    success: function (res) {
+                        console.log(res);
+                    },
+                    error: function (res){
+                        console.log(res);
+                    }
+                });
+            } else if(layEvent === "del") {
+                layer.confirm('真的删除行么', function(index){
+                    obj.del(); //删除对应行（tr）的DOM结构
+
+                    layer.close(index);
+                    $.ajax({
+                        type: "POST",
+                        dataType: "json",
+                        url: "/studentDel",
+                        data: obj.data,
+                        success: function (res) {
+                            console.log(res);
+                        },
+                        error: function (res){
+                            console.log(res);
+                        }
+                    });
+                });
+            }
+        })
+        table.render({
+            elem: '#test'
+            ,url: '/studentFind'
+            ,toolbar: '#toolbarDemo'
+            ,title: '用户数据表'
+            ,totalRow: true
+            ,cols: [[
+                {type: 'checkbox', fixed: 'left'}
+                ,{field:'id', title:'ID', width:150, fixed: 'left'}
+                ,{field:'name', title:'用户名', width:120, edit: 'text'}
+                ,{field:'sid', title:'学号', width:120, edit: 'text'}
+                ,{field:'phone', title:'电话', width:120, edit: 'text'}
+                ,{field:'email', title:'邮箱', width:150, edit: 'text', templet: function(res){
+                        return '<em>'+ res.email +'</em>'
+                    }}
+
+                ,{field:'sex', title:'性别', width:80, edit: 'text', sort: true}
+                ,{field:'age', title:'年龄', width:80, edit: 'text'}
+                ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+            ]]
+            ,page: true
+        });
+
+        //工具栏事件
+        table.on('toolbar(test)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'getCheckLength':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：'+ data.length + ' 个');
+                    break;
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选': '未全选')
+                    break;
+            };
+        });
+    });
+</script>
+</body>
+</html>
