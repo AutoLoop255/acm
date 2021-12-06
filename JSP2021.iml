@@ -23,9 +23,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Tomcat 8.5.73" level="application_server_libraries" />
     <orderEntry type="library" name="c3p0-0.9.5.5" level="project" />
     <orderEntry type="library" name="commons-dbutils-1.7" level="project" />
     <orderEntry type="library" name="gson-2.8.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Tomcat 9.0.54" level="application_server_libraries" />
   </component>
 </module>
