@@ -77,6 +77,11 @@ public class StudentRepositoryImpl implements StudentRepository {
         }
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     @Override
     public Student FindById(Long id) {
         QueryRunner qr = new QueryRunner(C3p0Utils.getDataSource());
@@ -88,6 +93,31 @@ public class StudentRepositoryImpl implements StudentRepository {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     *
+     * @param student
+     * @return
+     */
+    @Override
+    public boolean UpdateById(Student  student) {
+        QueryRunner qr = new QueryRunner(C3p0Utils.getDataSource());
+        try {
+            int res = qr.update("update student set name = ?, sid = ?, sex = ?, age = ?, password = ?, phone = ?, email = ? WHERE id = ?",
+                    student.getName(),
+                    student.getSid(),
+                    student.getSex(),
+                    student.getAge(),
+                    student.getPassword(),
+                    student.getPhone(),
+                    student.getEmail(),
+                    student.getId());
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+           return false;
         }
     }
 

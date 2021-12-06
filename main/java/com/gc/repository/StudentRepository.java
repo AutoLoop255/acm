@@ -13,4 +13,6 @@ public interface StudentRepository {
     boolean DelById(Long id);
 
     Student FindById(Long id);
+
+    boolean UpdateById(Student student);
 }
