@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+</head>
+<body>
+<h1> 学生管理界面 </h1>
+<table class="layui-hide" id="stutable" lay-filter="stutable"></table>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">增加一个学生</button>
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+    </div>
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<form class="layui-form" lay-filter = "showform" style="margin: 5%; display: none" id = "window">
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-inline">
+            <input id="name" type="text" name="name" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">学号</label>
+        <div class="layui-input-inline">
+            <input id="sid" type="text" name="sid" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-form-block">
+            <input lay-filter = "aa" type="radio" name="sex" value="男" title ="男" checked>
+            <input lay-filter = "bb" type="radio" name="sex" value="女" title ="女">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">年龄</label>
+        <div class="layui-input-inline">
+            <input id = "age" type="text" name="age" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-inline">
+            <input id = "password" type="text" name="password"  autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">电话号码</label>
+        <div class="layui-input-inline">
+            <input id = "phone" type="text" name="phone"  autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">邮箱</label>
+        <div class="layui-input-inline">
+            <input id = "email" type="text" name="email" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+</form>
+<script src="../layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述 JS 路径需要改成你本地的 -->
+
+<script>
+
+    layui.use(['table', 'form'], function(){
+
+        var table = layui.table,
+            form = layui.form,
+                $ = layui.jquery;
+        table.on('tool(stutable)', function (obj){
+             var Tdata = obj.data,
+
+              layEvent = obj.event;
+            console.log("原来表中的数据", Tdata);
+            console.log(layEvent)
+
+            /**
+             * 修改操作
+             */
+            if(layEvent === "edit") {
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "/studentFindById",
+                    data: obj.data,
+                    success: function (res) {
+                        console.log(res);
+                        Rdata = res.data;
+                        layer.open({
+                            type: 1
+                            ,skin: 'layui-layer-molv'
+                            ,area: ['500px', '500px']
+                            ,title: ['编辑书本信息','font-size:18px']
+                            ,btn: ['确定', '取消']
+                            ,shadeClose: true
+                            ,shade: 0 //遮罩透明度
+                            ,maxmin: true //允许全屏最小化
+                            ,content:$("#window") //弹窗路径,
+                            ,success:function(layero, index){
+                                $('#name').val(Rdata.name);
+                                $('#sid').val(Rdata.sid);
+                                $('#age').val(Rdata.age);
+                                $('#email').val(Rdata.email);
+                                $('#phone').val(Rdata.phone);
+                                $('#password').val(Rdata.password);
+                                //关键用法
+                                if(Rdata.sex === '男') {
+                                    $('input:radio[name=sex]')[0].click();
+                                } else {
+                                    $('input:radio[name=sex]')[1].click();
+                                }
+                                // form.val("showform", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+                                //     "name": Rdata.name
+                                //     ,"sid": Rdata.sid
+                                //     ,"age": Rdata.age,
+                                //     "bb": true,
+                                //     "phone": Rdata.phone
+                                //     ,"password": Rdata.password
+                                //     ,"email": Rdata.email
+                                // });
+                                form.render();
+                            }
+                            , yes:function(){
+                                //拿到表格数据
+                                let tabledata = form.val("showform");
+                                console.log(tabledata)
+                                tabledata.id = Rdata.id;
+                                // let tabledata = {};
+                                // tabledata.data = tempdata;
+                                // console.log(tabledata)
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: "json",
+                                    url: "/studentUpdateById",
+                                    data: tabledata,
+                                    success: function (res) {
+                                        console.log(res);
+                                    },
+                                    error: function (res){
+                                        console.log(res);
+                                    }
+                                });
+                                layer.close(layer.index);
+                            }
+                            , end: function (){
+                                table.reload('stutable');
+                            }
+
+                        })
+                    },
+                    error: function (res){
+                        console.log(res);
+                    }
+                });
+
+
+            }
+            /**
+             *  刷新操作
+             */
+            else if(layEvent === "del") {
+
+                layer.confirm('真的删除行么', function(index){
+                    obj.del(); //删除对应行（tr）的DOM结构
+
+                    layer.close(index);
+                    $.ajax({
+                        type: "POST",
+                        dataType: "json",
+                        url: "/studentDel",
+                        data: obj.data,
+                        success: function (res) {
+                            console.log(res);
+                        },
+                        error: function (res){
+                            console.log(res);
+                        }
+                    });
+                });
+            }
+        })
+
+        /**
+         * table显示
+         */
+        table.render({
+            elem: '#stutable'
+            ,url: '/studentFind'
+            ,toolbar: '#toolbarDemo'
+            ,title: '用户数据表'
+            ,totalRow: true
+            ,cols: [[
+                {type: 'checkbox', fixed: 'left'}
+                ,{field:'id', title:'ID', width:150, fixed: 'left'}
+                ,{field:'name', title:'用户名', width:120, edit: 'text'}
+                ,{field:'sid', title:'学号', width:120, edit: 'text'}
+                ,{field:'phone', title:'电话', width:120, edit: 'text'}
+                ,{field:'email', title:'邮箱', width:150, edit: 'text', templet: function(res){
+                        return '<em>'+ res.email +'</em>'
+                    }}
+                ,{field:'sex', title:'性别', width:80, edit: 'text', sort: true}
+                ,{field:'age', title:'年龄', width:80, edit: 'text'}
+                ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+            ]]
+            ,page: true
+        });
+
+        //工具栏事件
+        table.on('toolbar(stutable)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'getCheckLength':
+                    $('#name').val("");
+                    $('#sid').val("");
+                    $('#age').val("");
+                    $('#email').val("");
+                    $('#phone').val("");
+                    $('#password').val("");
+                    layer.open({
+                        type: 1
+                        ,skin: 'layui-layer-molv'
+                        ,area: ['500px', '500px']
+                        ,title: ['编辑书本信息','font-size:18px']
+                        ,btn: ['确定', '取消']
+                        ,shadeClose: true
+                        ,shade: 0 //遮罩透明度
+                        ,maxmin: true //允许全屏最小化
+                        ,content:$("#window") //弹窗路径,
+                        , yes:function(){
+                            let formdata = form.val("showform");
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "/studentAdd",
+                                data: formdata,
+                                success: function (res) {
+                                    console.log(res);
+                                },
+                                error: function (res){
+                                    console.log(res);
+                                }
+                            });
+                            layer.close(layer.index);
+                        }
+                        , end: function (){
+                            table.reload('stutable');
+                        }
+                    })
+                    break;
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选': '未全选')
+                    break;
+            };
+        });
+    });
+</script>
+
+
+
+</body>
+
+</html>
+

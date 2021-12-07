@@ -6,15 +6,13 @@
     <link rel="stylesheet" href="../layui/css/layui.css">
 </head>
 <body>
-<h1> stuFind </h1>
-<table class="layui-hide" id="test" lay-filter="test"></table>
+<h1> 教师管理界面 </h1>
+<table class="layui-hide" id="teachtable" lay-filter="teachtable"></table>
 
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
 
-        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">增加一个学生</button>
-        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">增加一个教师</button>
     </div>
 </script>
 <script type="text/html" id="barDemo">
@@ -31,9 +29,9 @@
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">学号</label>
+        <label class="layui-form-label">教师号</label>
         <div class="layui-input-inline">
-            <input id="sid" type="text" name="sid" autocomplete="off" class="layui-input">
+            <input id="tid" type="text" name="tid" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
@@ -77,11 +75,11 @@
 
         var table = layui.table,
             form = layui.form,
-                $ = layui.jquery;
-        table.on('tool(test)', function (obj){
-             var Tdata = obj.data,
+            $ = layui.jquery;
+        table.on('tool(teachtable)', function (obj){
+            var Tdata = obj.data,
 
-              layEvent = obj.event;
+                layEvent = obj.event;
             console.log("原来表中的数据", Tdata);
             console.log(layEvent)
 
@@ -92,7 +90,7 @@
                 $.ajax({
                     type: "POST",
                     dataType: "json",
-                    url: "/studentFindById",
+                    url: "/teacherFindById",
                     data: obj.data,
                     success: function (res) {
                         console.log(res);
@@ -109,7 +107,7 @@
                             ,content:$("#window") //弹窗路径,
                             ,success:function(layero, index){
                                 $('#name').val(Rdata.name);
-                                $('#sid').val(Rdata.sid);
+                                $('#tid').val(Rdata.tid);
                                 $('#age').val(Rdata.age);
                                 $('#email').val(Rdata.email);
                                 $('#phone').val(Rdata.phone);
@@ -122,12 +120,10 @@
                                 }
                                 // form.val("showform", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
                                 //     "name": Rdata.name
-                                //     ,"sid": Rdata.sid
-                                //     ,"age": Rdata.age
-                                //     ,"radio[aa]": true,
-                                //     "radio[bb]": function (){
-                                //         return Rdata.sex === '女' ? true : false;
-                                //     },"phone": Rdata.phone
+                                //     ,"tid": Rdata.tid
+                                //     ,"age": Rdata.age,
+                                //     "bb": true,
+                                //     "phone": Rdata.phone
                                 //     ,"password": Rdata.password
                                 //     ,"email": Rdata.email
                                 // });
@@ -144,7 +140,7 @@
                                 $.ajax({
                                     type: "POST",
                                     dataType: "json",
-                                    url: "/studentUpdateById",
+                                    url: "/teacherUpdateById",
                                     data: tabledata,
                                     success: function (res) {
                                         console.log(res);
@@ -156,7 +152,7 @@
                                 layer.close(layer.index);
                             }
                             , end: function (){
-                                table.reload('test');
+                                table.reload('teachtable');
                             }
 
                         })
@@ -180,7 +176,7 @@
                     $.ajax({
                         type: "POST",
                         dataType: "json",
-                        url: "/studentDel",
+                        url: "/teacherDel",
                         data: obj.data,
                         success: function (res) {
                             console.log(res);
@@ -197,8 +193,8 @@
          * table显示
          */
         table.render({
-            elem: '#test'
-            ,url: '/studentFind'
+            elem: '#teachtable'
+            ,url: '/teacherFind'
             ,toolbar: '#toolbarDemo'
             ,title: '用户数据表'
             ,totalRow: true
@@ -206,7 +202,7 @@
                 {type: 'checkbox', fixed: 'left'}
                 ,{field:'id', title:'ID', width:150, fixed: 'left'}
                 ,{field:'name', title:'用户名', width:120, edit: 'text'}
-                ,{field:'sid', title:'学号', width:120, edit: 'text'}
+                ,{field:'tid', title:'教师号', width:120, edit: 'text'}
                 ,{field:'phone', title:'电话', width:120, edit: 'text'}
                 ,{field:'email', title:'邮箱', width:150, edit: 'text', templet: function(res){
                         return '<em>'+ res.email +'</em>'
@@ -219,7 +215,7 @@
         });
 
         //工具栏事件
-        table.on('toolbar(test)', function(obj){
+        table.on('toolbar(teachtable)', function(obj){
             var checkStatus = table.checkStatus(obj.config.id);
             switch(obj.event){
                 case 'getCheckData':
@@ -228,7 +224,7 @@
                     break;
                 case 'getCheckLength':
                     $('#name').val("");
-                    $('#sid').val("");
+                    $('#tid').val("");
                     $('#age').val("");
                     $('#email').val("");
                     $('#phone').val("");
@@ -248,7 +244,7 @@
                             $.ajax({
                                 type: "POST",
                                 dataType: "json",
-                                url: "/studentAdd",
+                                url: "/teacherAdd",
                                 data: formdata,
                                 success: function (res) {
                                     console.log(res);
@@ -260,7 +256,7 @@
                             layer.close(layer.index);
                         }
                         , end: function (){
-                            table.reload('test');
+                            table.reload('teachtable');
                         }
                     })
                     break;

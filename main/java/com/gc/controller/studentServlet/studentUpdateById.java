@@ -1,4 +1,4 @@
-package com.gc.controller;
+package com.gc.controller.studentServlet;
 
 import com.gc.entity.Student;
 import com.gc.repository.StudentRepository;

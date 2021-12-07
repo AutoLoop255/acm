@@ -49,19 +49,14 @@
 
 
                 <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">学生管理</a>
+                    <a class="" href="javascript:;">人员管理</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" onclick="change('stuFind')">学生查询</a></dd>
-                        <dd><a href="javascript:;" onclick="change('stuAdd')">学生添加</a></dd>
+                        <dd><a href="javascript:;" onclick="change('studentManager')">学生管理</a></dd>
+                        <%--<dd><a href="javascript:;" onclick="change('stuAdd')">学生添加</a></dd>--%>
+                        <dd><a href="javascript:;" onclick="change('teacherManager')">教师管理</a></dd>
                     </dl>
                 </li>
-                <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">教师管理</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" onclick="change('teachFind')">教师查询</a></dd>
-                        <dd><a href="javascript:;" onclick="change('teachAdd')">教师添加</a></dd>
-                    </dl>
-                </li>
+
 
             </ul>
         </div>
@@ -70,7 +65,7 @@
     <div class="layui-body">
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
-            <iframe src="main/stuFind.html" frameborder="0" id="demoAdmin" style="width: 100%; height: 100%;"></iframe>
+            <iframe src="main/studentManager.html" frameborder="0" id="demoAdmin" style="width: 100%; height: 100%;"></iframe>
 
         </div>
     </div>
@@ -86,25 +81,19 @@
         let top = "main/";
         //拿到frame 的object 然后 把 src 改成对应的
         let fobj = document.getElementById("demoAdmin");
-        if(res === 'stuFind') {
+        if(res === 'studentManager') {
             fobj.setAttribute("src", top + res + ".html");
         }
-        if(res === 'stuAdd') {
+        if(res === 'teacherManager') {
             fobj.setAttribute("src", top + res + ".html");
-        }
-        if(res === 'teachFind') {
-            fobj.setAttribute("src", top + res + ".html");
-        }
-        if(res === 'teachAdd') {
-            fobj.setAttribute("src", top + res + ".html");
-        }
+        }0
     }
     //JS
     layui.use(['element', 'layer', 'util'], function(){
         var layer = layui.layer
             ,util = layui.util
             ,$ = layui.$;
-        $(document).on('click', '')
+
         //头部事件
         util.event('lay-header-event', {
             //左侧菜单事件
